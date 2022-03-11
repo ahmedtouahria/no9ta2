@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import  generics
+from resto.models import Restaurant
 from user.models import User,Profile
 from .serializers import CreateUserSerializer, LoginUserSerializer ,ProfileSerializer
 from knox.models import AuthToken
@@ -83,7 +84,20 @@ class RegisterUserWithOutSession(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        print(request.session.get_expiry_date())
+        print(user)
+       # print(request.session.get_expiry_date())
+        return Response({
+        "user": CreateUserSerializer(user, context=self.get_serializer_context()).data,
+        "token": AuthToken.objects.create(user)[1],
+        })          
+class RegisterUserRestaurant(generics.GenericAPIView):
+    serializer_class = CreateUserSerializer
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save(is_staff=True)
+        #print(request.session.get_expiry_date())
+        Restaurant.objects.create(user=user,name=user,)
         return Response({
         "user": CreateUserSerializer(user, context=self.get_serializer_context()).data,
         "token": AuthToken.objects.create(user)[1],

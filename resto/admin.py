@@ -12,7 +12,7 @@ from djstripe import models
 
 class RestoAdmin(admin.ModelAdmin):
  model=Restaurant   
- list_display = ('name', 'position', 'phone','user')
+ list_display = ('name', 'position', 'phone','user','active')
  def has_add_permission(self, request, obj=None):
         return request.user.is_admin 
  def has_delete_permission(self, request, obj=None):
@@ -84,10 +84,13 @@ class MealSubAdmin(admin.ModelAdmin):
 
  
  def changelist_view(self, request, extra_context=None):
-        resto_of_staff=Restaurant.objects.get(user=request.user)
-        print(resto_of_staff)
-        food_resto = MealSubscribe.objects.filter(resto=resto_of_staff)
-        print(food_resto)
+        try:
+               resto_of_staff=Restaurant.objects.get(user=request.user)
+        except:
+               resto_of_staff=None 
+        #print(resto_of_staff)
+        #food_resto = MealSubscribe.objects.filter(resto=resto_of_staff)
+        #print(food_resto)
         # Aggregate new subscribers per day
         if request.user.is_admin:
          chart_data = (

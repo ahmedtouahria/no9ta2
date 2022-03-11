@@ -21,21 +21,23 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # get all meals list to any one 
 class MealsList(generics.ListAPIView):
    serializer_class = MealSerializer
-   queryset = Meal.objects.all()
+   resto=Restaurant.objects.filter(active=True)
+   queryset = Meal.objects.filter(restaurant__in=resto)
 
 # get meal by id
 class MealRetrive(generics.RetrieveAPIView):
    serializer_class = MealSerializer
-   queryset = Meal.objects.all()
+   resto=Restaurant.objects.filter(active=True)
+   queryset = Meal.objects.filter(restaurant__in=resto)
    lookup_field = 'id'
 # get resto List to any one
 class RestoList(generics.ListAPIView):
    serializer_class = RestoSerializer
-   queryset = Restaurant.objects.all()
+   queryset = Restaurant.objects.filter(active=True)
 # get resto by id
 class RestoRetrive(generics.RetrieveAPIView):
    serializer_class = RestoSerializer
-   queryset = Restaurant.objects.all()
+   queryset = Restaurant.objects.filter(active=True)
    lookup_field = 'id'
 # To ensure that the user cannot exceed 1 subscribe per day
 class OncePerDayUserThrottle(UserRateThrottle):
@@ -74,9 +76,14 @@ class SubscribeMealPost(generics.CreateAPIView):
    queryset = MealSubscribe.objects.all()
    # override this function for set current user to user
    def perform_create(self, serializer):
-        print(self.request.user)
-        serializer.save(user=self.request.user)
-
+       # print(self.request.user)
+       # business code for ensure to user is subscribed in last week ;)
+        d = date.today()-timedelta(days=7)
+        userSub = SubscribeUser.objects.filter(user=self.request.user, created_at__gte=d).count()
+        if userSub>0:
+         serializer.save(user=self.request.user)
+        else:
+            pass 
  # get list of user foods this week
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
@@ -85,7 +92,7 @@ def SubscribeMealList(request):
    d = date.today()-timedelta(days=7)   
    # print(request.user)
    if request.method == 'GET':
-      mealsSubs = MealSubscribe.objects.filter(user=request.user, date__gte=d)
+      mealsSubs = MealSubscribe.objects.filter(user=request.user, created_at__gte=d)
      # print(mealsSubs)
       serializers = MealSubscribeSerializer(mealsSubs, many=True)
       return Response(serializers.data)
@@ -96,8 +103,6 @@ def SubscribeMealList(request):
 ##############################------# Used webView #------##################################################
 # Get api_key from settings 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
-from django.utils.decorators import method_decorator
-
 #checkout stripe webview 
 #@method_decorator(login_required, name='dispatch')
 
@@ -166,7 +171,9 @@ checkout_redirect89 = CheckoutRedirectView89.as_view()
 checkout_redirect130 = CheckoutRedirectView130.as_view()
 checkout_redirect220 = CheckoutRedirectView220.as_view()
 
-YOUR_DOMAIN="http://127.0.0.1:8000"
+#YOUR_DOMAIN="http://127.0.0.1:8000"
+YOUR_DOMAIN="https://noqtaa.herokuapp.com"
+
 # next step we will create 3 points to payment type [89,130,220] 
 #@method_decorator(login_required, name='dispatch')
 class CreateCheckoutSession_89(RedirectView):

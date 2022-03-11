@@ -25,6 +25,7 @@ class Restaurant(models.Model):
     phone = models.CharField(validators=[phone_regex], max_length=17, unique=True)
     email = models.EmailField(max_length=254)
     image = models.ImageField(upload_to=upload_image_path_resto)
+    active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

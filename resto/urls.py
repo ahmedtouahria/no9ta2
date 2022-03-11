@@ -1,4 +1,6 @@
 from django.urls import path, include
+
+from user.views import RegisterUserRestaurant
 from .views import *
 #from rest_framework import routers
 
@@ -11,6 +13,7 @@ urlpatterns = [
     path("subscribe/", SubscribePost.as_view()),
     path('mealsubscribe/', SubscribeMealPost.as_view()),
     path("mealsubscribe/list/", SubscribeMealList),
+    path("registerreso/", RegisterUserRestaurant.as_view(), name="registerresto"),
    # path('setData/', getUserDataForStripe.as_view()),
 
     #--------------PAYMENT GATWAY------------------#

@@ -24,7 +24,7 @@ class MealSubscribeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MealSubscribe
-        fields = [ 'food', 'user', 'code', 'date']
+        fields = [ 'food', 'user', 'code', 'created_at']
         extra_kwargs={'code':{'read_only':True},'date':{'read_only':True},'user':{'read_only':True}}
         # function that returns the owner of a tweet
         
