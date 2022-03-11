@@ -1,0 +1,112 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+<!-- Override extrahead to add Chart.js -->
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const ctx = document.getElementById('myChart').getContext('2d');
+
+  // Sample data
+  const chartData = {{ chart_data | safe }};
+
+  // Parse the dates to JS
+  chartData.forEach((d) => {
+    d.x = new Date(d.date);
+  });
+
+  // Render the chart
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      datasets: [
+        {
+          label: 'new subscribe',
+          data: chartData,
+          backgroundColor: '#F14A16',
+          fill:false,
+          borderColor: '#F14A16',
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        xAxes: [
+          {
+            type: 'time',
+            time: {
+              unit: 'day',
+              round: 'day',
+              displayFormats: {
+                day: 'MMM D',
+              },
+            },
+          },
+        ],
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true,
+            },
+          },
+        ],
+      },
+    },
+  });
+});
+document.addEventListener('DOMContentLoaded', () => {
+
+  var pieChart = document.getElementById('subscribe_type').getContext('2d')
+  var myPieChart = new Chart(pieChart, {
+    type: 'pie',
+    data: {
+      datasets: [{
+        data: [{{subscribe_89_count}},{{subscribe_130_count}},{{subscribe_220_count}}],
+        backgroundColor :["#FFB2A6","#FFF89A","#9ADCFF"],
+        borderWidth: 5,
+        
+      }],
+      labels: ['Subscribe Type 89', 'Subscribe Type 130','Subscribe Type 220'] 
+    },
+    options : {
+      responsive: true, 
+      maintainAspectRatio: false,
+      legend: {
+        position : 'left',
+        labels : {
+          fontColor: 'grey',
+          fontSize: 15,
+        //  usePointStyle : true,
+          padding:25
+        }
+      },
+      pieceLabel: {
+        render: 'percentage',
+        fontColor: '#FF8AAE',
+        fontSize: 14,
+      },
+
+
+    }
+  })
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Render our chart -->
+<div >
+  <canvas style="margin-bottom: 30px; width: 60%; height: 50%;" id="myChart"></canvas>
+</div>
+<div>
+  <canvas style="margin-bottom: 30px;height:270px !important" id="subscribe_type"></canvas>
+
+</div>
+<!-- Render the rest of the ChangeList view -->
+{{ block.super }}
+{% endblock %}
