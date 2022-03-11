@@ -166,7 +166,7 @@ checkout_redirect89 = CheckoutRedirectView89.as_view()
 checkout_redirect130 = CheckoutRedirectView130.as_view()
 checkout_redirect220 = CheckoutRedirectView220.as_view()
 
-YOUR_DOMAIN="http://127.0.0.1:8000"
+YOUR_DOMAIN="https://noqtaa.herokuapp.com"
 # next step we will create 3 points to payment type [89,130,220] 
 #@method_decorator(login_required, name='dispatch')
 class CreateCheckoutSession_89(RedirectView):
