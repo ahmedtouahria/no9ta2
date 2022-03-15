@@ -1,6 +1,4 @@
 from django.urls import path, include
-
-from user.views import RegisterUserRestaurant
 from .views import *
 #from rest_framework import routers
 
@@ -10,11 +8,8 @@ urlpatterns = [
     path("meals/<int:id>", MealRetrive.as_view(),),
     path("resto/", RestoList.as_view(),),
     path("resto/<int:id>", RestoRetrive.as_view(),),
-    path("subscribe/", SubscribePost.as_view()),
     path('mealsubscribe/', SubscribeMealPost.as_view()),
     path("mealsubscribe/list/", SubscribeMealList),
-    path("registerreso/", RegisterUserRestaurant.as_view(), name="registerresto"),
-   # path('setData/', getUserDataForStripe.as_view()),
 
     #--------------PAYMENT GATWAY------------------#
     path("stripe/", include("djstripe.urls", namespace="djstripe")),
@@ -50,22 +45,3 @@ urlpatterns = [
 
 
 ]
-
-# Stripe payment endpoints
-""" path("stripe/", include("djstripe.urls", namespace="djstripe")),
-    path(
-        "checkout/redirect/<str:session_id>",
-        checkout_redirect,
-        name="checkout_redirect",
-    ),
-    path("stripe/thankyou/89", thankyou_89, name="thankyou89"),
-    path("stripe/thankyou/130", thankyou_130, name="thankyou130"),
-    path("stripe/thankyou/220", thankyou_220, name="thankyou220"),
-    
-     path("checkout/create/89", create_checkout_session_89,
-         name="create_checkout_session_89"),
-    path("checkout/create/130", create_checkout_session_130,
-         name="create_checkout_session_130"),
-    path("checkout/create/220", create_checkout_session_220,
-         name="create_checkout_session_220"),
-     """

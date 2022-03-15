@@ -9,10 +9,16 @@ from knox.models import AuthToken
 # Register your models here. 
 from djstripe import models
 
-
 class RestoAdmin(admin.ModelAdmin):
  model=Restaurant   
- list_display = ('name', 'position', 'phone','user','active')
+ list_display = ('name', 'latitude',
+         'longitude', 'phone','user','active')
+ def get_fields(self, request, obj=None):
+        if request.user.is_admin:
+            return ('name', 'latitude',
+         'longitude', 'phone','user','active')
+        return ('name', 'latitude',
+         'longitude', 'phone','user')
  def has_add_permission(self, request, obj=None):
         return request.user.is_admin 
  def has_delete_permission(self, request, obj=None):
@@ -27,6 +33,8 @@ class SubscribeAdmin(admin.ModelAdmin):
  def has_add_permission(self, request, obj=None):
         return request.user.is_admin
  def has_delete_permission(self, request, obj=None):
+        return request.user.is_admin
+ def has_change_permission(self, request, obj=None):
         return request.user.is_admin
  def changelist_view(self, request, extra_context=None):
         subscribe_89_count=SubscribeUser.objects.filter(type_sub=89).count()
@@ -49,7 +57,6 @@ class SubscribeAdmin(admin.ModelAdmin):
        "subscribe_220_count":subscribe_220_count,
        
        }
-
         # Call the superclass changelist_view to render the page
         return super().changelist_view(request, extra_context=extra_context)
 ###############################################

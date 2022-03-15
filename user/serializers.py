@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CreateUserSerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name','email', 'phone', 'country', 'password')
+        fields = ('name', 'phone', 'country', 'password')
         password = serializers.CharField(
             style={'input_type': 'password'}, min_length=8, max_length=100, write_only=True)
 
@@ -30,8 +30,11 @@ class UserSerializer(CountryFieldMixin, serializers.ModelSerializer):
         model = User
         fields = ('id', 'phone', 'name', 'country')
 
-
-class LoginUserSerializer(serializers.Serializer):
+   
+class LoginUserSerializer(CountryFieldMixin,serializers.Serializer):
+    class Meta: 
+        model = User
+        fields = ('id', 'phone', 'name', 'country')
     phone = serializers.CharField()
     password = serializers.CharField(
         style={'input_type': 'password'}, trim_whitespace=False)

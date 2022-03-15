@@ -1,0 +1,77 @@
+{% extends 'base_register.html' %} {% block content %}
+<style></style>
+<script>
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(showPosition);
+    } else {
+      x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+  }
+
+  function showPosition(position) {
+    var longitude = document.getElementById("longitude");
+    var latitude = document.getElementById("latitude");
+    document.getElementById("submit").disabled = false;
+
+    latitude.value = position.coords.latitude;
+    longitude.value = position.coords.longitude;
+    console.log(latitude.value);
+  }
+</script>
+<div class="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
+  <div class="wrapper wrapper--w680">
+    <div class="card card-4">
+      <div class="card-body">
+        <h2 class="title" style="font-family: 'Almarai', sans-serif !important">
+          إنشاء حساب لمطعم
+        </h2>
+        {% if messages %}
+         {% for message in messages %}
+        <div 
+        style="font-family: 'Almarai', sans-serif !important"
+        
+        class="alert alert-info" id="alert">{{message}}</div>
+        {% endfor %}
+         {% endif %}
+        <form
+          style="font-family: 'Almarai', sans-serif !important"
+          enctype="multipart/form-data"
+          method="POST"
+        >
+          {% csrf_token %} {{formA}}
+          <div class="alert alert-warning" role="alert">
+            <strong class="mx-2"> إحداثيات الموقع </strong> يرجى تفعيل نظام
+            تحديد المواقع لتحديد مكانك بدقة
+          </div>
+          <label class="form-check-label w-100 mt-2" for="flexCheckDefault">
+            <input
+              class="form-check-input m-2"
+              type="checkbox"
+              value=""
+              onclick="getLocation()"
+              id="flexCheckDefault"
+            />
+
+            ارسال الإحداثيات
+          </label>
+          {{formB}}
+
+          <div class="p-t-15">
+            <button
+              style="font-family: 'Almarai', sans-serif !important"
+              class="btn btn-success w-50 my-2"
+              disabled
+              id="submit"
+              type="submit"
+              onclick="getLocation()"
+            >
+              تسجيل
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

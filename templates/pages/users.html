@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block content %}
+<div style="width: 70% !important; margin-right: 20%">
+    <h3 class="p-4">قائمة الإشتراكات</h3>
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">إسم المستخدم</th>
+        <th scope="col">الوجبة</th>
+        <th scope="col">الكود</th>
+        <th scope="col"> تاريخ الاشتراك</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users_sub %}
+      <tr>
+        <th>{{user.user}}</th>
+        <td>{{user.food}}</td>
+        <td>{{user.code}}</td>
+        <td>{{user.created_at}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

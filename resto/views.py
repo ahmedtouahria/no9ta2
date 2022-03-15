@@ -10,23 +10,24 @@ from rest_framework import generics, permissions
 from .models import Meal, Restaurant, MealSubscribe, SubscribeUser
 from .serializers import *
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
-from datetime import date, timedelta ,datetime
+from datetime import date, timedelta
 from rest_framework.throttling import UserRateThrottle
 from user.models import Profile , User
-from rest_framework import status
+#from rest_framework import status
 from django.shortcuts import render, redirect 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # get all meals list to any one 
 class MealsList(generics.ListAPIView):
    serializer_class = MealSerializer
+   #to insure resto is activated By adnin
    resto=Restaurant.objects.filter(active=True)
    queryset = Meal.objects.filter(restaurant__in=resto)
 
 # get meal by id
 class MealRetrive(generics.RetrieveAPIView):
    serializer_class = MealSerializer
+   #to insure resto is activated By adnin
    resto=Restaurant.objects.filter(active=True)
    queryset = Meal.objects.filter(restaurant__in=resto)
    lookup_field = 'id'
@@ -48,7 +49,7 @@ class TowPerDayUserThrottle(UserRateThrottle):
 
 ##########################################################################################
 # throttle_classes decorator to implement limitted request per day
-@throttle_classes([OncePerDayUserThrottle])
+""" @throttle_classes([OncePerDayUserThrottle])
 class SubscribePost(generics.CreateAPIView):
    permission_classes = (permissions.IsAuthenticated,)
    serializer_class = SubscriberSerializer
@@ -65,7 +66,7 @@ class SubscribePost(generics.CreateAPIView):
          profile_recommended.save()
          print(profile_recommended.profit)
         serializer.save(user=self.request.user)
-
+ """
 
 # throttle_classes decorator to implement limitted request per day
 
@@ -173,10 +174,7 @@ checkout_redirect220 = CheckoutRedirectView220.as_view()
 
 #YOUR_DOMAIN="http://127.0.0.1:8000"
 YOUR_DOMAIN="https://noqtaa.herokuapp.com"
-
-YOUR_DOMAIN="https://noqtaa.herokuapp.com"
 # next step we will create 3 points to payment type [89,130,220] 
-#@method_decorator(login_required, name='dispatch')
 class CreateCheckoutSession_89(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
        # print(self.request.user.phone)
@@ -288,7 +286,7 @@ def thankyou_220(request):
    }
    return render(request, 'success_url.html', context)
 # function to authenticated user to subscribe and payment
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import  login
 from django.contrib import messages
 def loginPageStripe89(request):
     if request.user.is_authenticated:

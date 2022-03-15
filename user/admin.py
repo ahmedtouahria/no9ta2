@@ -16,7 +16,9 @@ class ProfileInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = 'Profile'
     fk_name = 'user'
-    readonly_fields=('code','profit')
+    readonly_fields=('code','profit','isPartner','recommended_by')
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_admin or (obj and obj.name == request.user.name)
 
 class UserAdmin(BaseUserAdmin):
     def has_add_permission(self, request, obj=None):
@@ -24,7 +26,7 @@ class UserAdmin(BaseUserAdmin):
     def has_delete_permission(self, request, obj=None):
         return request.user.is_admin
     def has_change_permission(self, request, obj=None):
-        return request.user.is_admin or (obj and obj.id == request.user.id)
+        return request.user.is_admin or (obj and obj.name == request.user.name)
     ##### function to display data in charts
     def changelist_view(self, request, extra_context=None):
         # Aggregate new user per day
@@ -65,18 +67,13 @@ class UserAdmin(BaseUserAdmin):
         return super().changelist_view(request, extra_context=extra_context)
     # The forms to add and change user instances
     model=User
-    def has_add_permission(self, request, obj=None):
-        return request.user.is_admin
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_admin
 
 #####################################################################
-    list_display = ('name', 'phone', 'admin','country')
+    list_display = ('name', 'phone', 'admin','country','is_resto')
     list_filter = ('staff','active' ,'admin', )
-    fieldsets = (
-    (None, {'fields': ('name','phone', 'password','country')}),
-     ('Permissions', {'fields': ('admin', 'active', 'staff',)}), )
-     
+    fieldsets = ((None, {'fields': ('name','phone', 'password','country','is_resto')}),('Permissions', {'fields': ( 'active', 'staff','admin')}), )
+    readonly_fields=('admin',)
+    
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
@@ -85,7 +82,6 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = ('phone','name')
     ordering = ('name',)
-    filter_horizontal = ()
 
 ##############################################################################
     inlines = (ProfileInline, )
@@ -99,7 +95,7 @@ class UserAdmin(BaseUserAdmin):
 class ProfileAdmin(admin.ModelAdmin):
  list_display = ('user', 'city', 'isPartner')
  list_filter = ('city', 'isPartner')
- readonly_fields=('code','profit')
+ readonly_fields=('code','profit','isPartner',)
  def has_add_permission(self, request, obj=None):
         return request.user.is_admin 
  def has_delete_permission(self, request, obj=None):

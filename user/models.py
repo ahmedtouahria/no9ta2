@@ -57,10 +57,10 @@ class User(AbstractBaseUser,PermissionsMixin):
     phone = models.CharField(validators=[phone_regex], max_length=17, unique=True)
     name = models.CharField(max_length=20, blank=False, null=False,unique=True)
     password=models.CharField(max_length=100, blank=False, null=False,validators=[MinLengthValidator(8)])
-    email=models.EmailField(max_length=25,null=True,blank=True)
     active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
+    is_resto=models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     country = CountryField()
     USERNAME_FIELD = 'phone'
@@ -117,8 +117,7 @@ def get_filename_ext(filepath):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(blank=True, null=True)
-    image = models.ImageField(
-        upload_to=upload_image_path_profile, default=None, null=True, blank=True)
+    image = models.ImageField(upload_to=upload_image_path_profile, default=None, null=True, blank=True)
     city = models.CharField(max_length=30, blank=True, null=True)
     code = models.CharField(max_length=12,blank=True)
     recommended_by = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null=True,related_name='ref_by')

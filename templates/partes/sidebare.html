@@ -1,0 +1,60 @@
+  <!-- في المكان ده هحط سلايد بار -->
+
+  <!-- Main Sidebar Container -->
+  <aside style="position: fixed;" class="main-sidebar bg-light sidebar-dark-danger elevation-4">
+    <!-- Brand Logo -->
+    <a href="{% url 'dashboard' %}" class="brand-link">
+      <span class="brand-text font-weight-bold mx-2 text-danger ">نقطة للمطاعم</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          {% if resto_user.image  %}
+          <img src="{{resto_user.image.url}}"/>
+      
+          {% endif %}
+        </div>
+        <div class="info w-100">
+          <a href="#" class="d-block text-secondary  "> إسم المطعم : </a><span class="text-danger font-weight-bold">{{resto_name}} </span>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2 text-dark">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <li class="nav-item text-dark">
+            <a href="{% url 'meals' %}" class="nav-link">
+              <i class="nav-icon fas fa-th text-dark"></i>
+              <p class="text-dark font-weight-bold">
+               قائمة الوجبات
+              </p>
+            </a>
+          </li>
+          <li class="nav-item text-dark">
+            <a href="{% url 'users' %}" class="nav-link">
+              <i class="nav-icon fas fa-list text-dark"></i>
+
+              <p class="text-dark font-weight-bold">
+               قائمة الإشتراكات
+              </p>
+            </a>
+          </li>
+          <hr>
+          <li class="nav-item text-dark">
+            <a href="{% url 'logout_resto' %}" class="nav-link">
+              <p class="text-dark font-weight-bold text-dark">
+               تسجيل خروج
+              </p>
+            </a>
+          </li>
+            
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>

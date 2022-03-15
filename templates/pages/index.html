@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+  <!-- في المكان ده هحط المحتوى -->
+  <div style="direction: rtl;" class="wrapper">
+
+
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div   class="content-wrapper">
+      <!-- Content Header (Page header) -->
+  
+  
+      <!--الاحصائيات-->
+      <div class="content py-3">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-header border-0">
+                  <div class="d-flex justify-content-between">
+                    <h3 class="card-title">اجمالي عدد الوجبات</h3>                    
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex">
+                    <p class="d-flex flex-column">
+                      <span class="text-bold text-lg text-primary"> {{count}} <span> وجبة </span></span>
+                      
+                    </p>  
+                  </div>
+                  <!-- /.d-flex -->
+
+                  <div class="position-relative mb-4">
+                    <canvas id="visitors-chart" height="220"></canvas>
+                  </div>  
+                </div>
+              </div>
+              <!-- /.card -->
+            </div>
+            <!-- /.col-md-6 -->
+         
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-header border-0">
+                  <div class="d-flex justify-content-between">
+                    <h3 class="card-title font-weight-bold">إحصائيات العملاء</h3>   
+                  </div>
+                </div>    
+                <div class="card-body">
+                  <div class="d-flex">
+                    <p class="d-flex flex-column">
+                      <div id="totalsalarys" class="text-lg">إجمالي عدد العملاء <span class="font-weight-bold text-success mx-2"> {{count_subscribers}}</span> </div><br></p>
+                  </div>
+                  <!-- /.d-flex -->
+  
+                  <div class="position-relative mb-4">
+                    <canvas id="sales-chart" height="220"></canvas>
+                  </div>
+  
+                
+                </div>
+              </div>
+            </div>
+        
+            <!-- /.col-md-6 -->
+          </div>
+          <!-- /.row -->
+  
+          <!-- form add books -->
+          <div class="row m-1 mb-3">   
+            <a href="#bookform" class="btn btn-danger" data-toggle="collapse">+ اضافة وجبة</a>
+          </div>
+          
+          <div id="bookform" class="card bg-light text-dark card-primary collapse">
+            <div class="card-header bg-danger">
+              <h3 class="card-title">اضافة وجبة</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="POST" enctype="multipart/form-data"  > 
+              {%  csrf_token  %}
+              <div class="card-body "> 
+             {{form}}
+                <small id='totalrente' class="form-text text-muted"></small>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button type="submit" class="btn btn-success">اضافة</button>
+              </div>
+            </form>
+          </div>
+  
+                <!-- /.card -->
+          </div>
+          <!-- end form add books -->
+  
+  
+          <!-- تصنيفات-->
+  
+          <div class="row justify-content-center mb-3">
+            <div class="col-4 ">
+              <ul class="nav">
+                {% for cat in category %}
+                <li class="nav-item cat{{cat.id}} ">
+                  <a id="" class="nav-link bg-primary" href="#">{{cat.name}}</a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <!-- books -->
+
+          <div class="row">
+          {% for meal in meals %} <!--book mn 3ndi w books jbtha mn views-->
+          <!-- الكتب -->
+              <div id="" class="col-md-4 bookhide book{{book.category.id}}">
+                  <!-- Widget: user widget style 1 -->
+                <div id="" class="card bg-white text-dark card-widget widget-user ">
+                  <!-- Add the bg color to the header using any of the bg-* classes -->
+                <!-- قائمة منسدلة -->
+                <div style="position: absolute;" class="btn-group">   
+                  <button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'update' meal.id %}">تعديل</a>
+                    <a class="dropdown-item" href="{% url 'delete' meal.id %}">حذف</a>
+                <!-- Button trigger modal -->
+                  </div>
+                </div>
+               
+                <div style="background:url({{meal.photos.url}});background-size:cover;height: 200px;"  class="widget-user-header bg-danger">             
+                </div>
+                <div class="widget-user-image">
+                </div>
+                <div style="padding-top: 0;
+                background-color: white;" class="card-footer">
+                  <div class="row">
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header"> الوجبة  </h5> <span class="description-text font-weight-bold text-danger pt-3">{{meal.name}} </span>
+                      </div>
+                    </div>
+                        <!-- /.col -->
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header"> السعر  </h5> <span class="description-text font-weight-bold text-info pt-3">QAR {{meal.price}} </span>
+
+                      </div>
+                    </div>
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header"> الحالة  </h5> 
+                        {% if meal.isAvailaible %}
+                        <span class="description-text font-weight-bold text-success pt-3">متاحة</span>
+                        {% else %}
+                        <span class="description-text font-weight-bold text-danger pt-3"> غير متاحة </span>
+
+                        {% endif %}
+
+                      </div>
+                    </div>
+                        <!-- /.col -->
+                
+                        <!-- /.col -->
+                  </div>
+                      <!-- /.row -->
+                </div>
+                </div>
+                  <!-- /.widget-user -->
+              </div>
+          <!-- نهاية الكتاب -->
+          {% endfor %}
+
+
+
+              <div class="row">
+                <div class="col text-center">
+                  <!--اضف صورة هنا في حالة عدم وجود كتب-->   
+                </div>
+              </div>
+          </div>    
+      </div>
+    </div>
+        <!-- /.container-fluid -->
+  </div>
+      <!-- /.content -->
+</div>
+    <!-- /.content-wrapper -->
+  
+
+
+{% endblock  %}
+
+  
+ 
