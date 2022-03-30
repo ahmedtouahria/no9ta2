@@ -207,7 +207,7 @@ def register_resto(request):
                user=User.objects.create(name=name,phone=phone,country="QA",password=password,is_resto=True)
                Restaurant.objects.create(user=user,name=name,phone=phone,latitude=latitude,longitude=longitude,image=image)
                print("success")
-               return redirect("register_resto")
+               return redirect("dashboard")
         else:   
          print(" no success")
          messages.error(request,"هذا المطعم موجود , يرجى إسناد إسم أخر للمطعم ")   
