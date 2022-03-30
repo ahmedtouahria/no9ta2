@@ -211,7 +211,7 @@ def register_resto(request):
         else:   
          print(" no success")
          messages.error(request,"هذا المطعم موجود , يرجى إسناد إسم أخر للمطعم ")   
-        return redirect("register_resto")
+        return redirect("dashboard")
          
     context={
         "formA":RegisterForm(),
