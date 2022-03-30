@@ -21,6 +21,7 @@ def upload_image_path_resto(instance, filename):
 class Restaurant(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
     name     = models.CharField(max_length=200,unique=True,blank=False,null=False)
+    position=models.CharField(max_length=220,null=True)
     latitude=models.CharField(max_length=200,default="0")
     longitude=models.CharField(max_length=200,default="0")
     phone = models.CharField(validators=[phone_regex], max_length=17, unique=True)
@@ -64,8 +65,8 @@ class Meal(models.Model):
         return f"{self.name} - {self.price} QAR"
     def resto_name(self):
         return self.restaurant.name
-    def count_meal_available(self):
-        return len(Meal.objects.filter(isAvailaible=True))
+  #  def count_meal_available(self):
+   #     return len(Meal.objects.filter(isAvailaible=True))
 class SubscribeUser(models.Model):
     type_choice = [
         (89, 89),

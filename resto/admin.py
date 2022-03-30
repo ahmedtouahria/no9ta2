@@ -11,7 +11,7 @@ from djstripe import models
 
 class RestoAdmin(admin.ModelAdmin):
  model=Restaurant   
- list_display = ('name', 'latitude',
+ list_display = ('name','position', 'latitude',
          'longitude', 'phone','user','active')
  def get_fields(self, request, obj=None):
         if request.user.is_admin:

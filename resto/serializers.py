@@ -13,7 +13,7 @@ class RestoSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(),)
     class Meta:
         model = Restaurant
-        fields = ['id', 'name','user', 'user_name', 'phone', 'image','active','latitude','longitude',]
+        fields = ['id', 'name','user', 'user_name', 'phone', 'image','active','position','latitude','longitude',]
 class SubscriberSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -23,7 +23,6 @@ class SubscriberSerializer(serializers.ModelSerializer):
         
         
 class MealSubscribeSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = MealSubscribe
         fields = [ 'food','food_name', 'user','user_name', 'code', 'created_at']
