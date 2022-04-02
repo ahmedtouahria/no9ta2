@@ -93,8 +93,8 @@ class UserAdmin(BaseUserAdmin):
     
  ##############################################################################   
 class ProfileAdmin(admin.ModelAdmin):
- list_display = ('user', 'city', 'isPartner')
- list_filter = ('city', 'isPartner')
+ list_display = ('user', 'country', 'isPartner')
+ list_filter = ( 'isPartner',)
  readonly_fields=('code','profit','isPartner',)
  def has_add_permission(self, request, obj=None):
         return request.user.is_admin 

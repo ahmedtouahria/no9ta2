@@ -70,7 +70,8 @@ class User(AbstractBaseUser,PermissionsMixin):
     objects = UserManager()
     def __str__(self):
         return self.name
-
+    def get_country(self):
+        return str(self.country)
     def get_full_name(self):
         return self.phone
 
@@ -118,14 +119,14 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(blank=True, null=True)
     image = models.ImageField(upload_to=upload_image_path_profile, default=None, null=True, blank=True)
-    city = models.CharField(max_length=30, blank=True, null=True)
     code = models.CharField(max_length=12,blank=True)
     recommended_by = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null=True,related_name='ref_by')
     isPartner = models.BooleanField(default=False)
     profit=models.FloatField(default=0.0)
     def __str__(self):
         return str(self.user)
-    
+    def country(self):
+        return self.user.country
     def num_of_partner(self):
         partners = Profile.objects.filter(isPartner=True)
         return len(partners)       

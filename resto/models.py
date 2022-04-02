@@ -5,6 +5,10 @@ import os
 from user.models import User
 from .utils import generate_random_code
 from django.conf import settings
+from location_field.models.plain import PlainLocationField
+from geopy.geocoders import Nominatim
+geolocator = Nominatim(user_agent="geoapiExercises")
+
 phone_regex = RegexValidator(regex=r'^\+?1?\d{9,14}$', message="Phone number must be entered in the format: '+999999999'. Up to 14 digits allowed.")
 
     
@@ -21,12 +25,16 @@ def upload_image_path_resto(instance, filename):
 class Restaurant(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
     name     = models.CharField(max_length=200,unique=True,blank=False,null=False)
-    position=models.CharField(max_length=220,null=True)
+    #position=models.CharField(max_length=220,null=True)
     latitude=models.CharField(max_length=200,default="0")
     longitude=models.CharField(max_length=200,default="0")
     phone = models.CharField(validators=[phone_regex], max_length=17, unique=True)
     image = models.ImageField(upload_to=upload_image_path_resto)
     active = models.BooleanField(default=False)
+    description=models.TextField()
+    location = PlainLocationField(based_fields=['city'], zoom=7)
+    def position(self):
+        return str(geolocator.geocode(self.latitude+","+self.longitude))
 
     def __str__(self):
         return self.name

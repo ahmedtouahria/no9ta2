@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'admin_interface', 
     'colorfield', 
     'django.contrib.admin',
+    'location_field.apps.DefaultConfig',
+
 ]
 X_FRAME_OPTIONS='SAMEORIGIN'
 REST_FRAMEWORK = {
@@ -84,7 +86,12 @@ ROOT_URLCONF = 'No9ta.urls'
 REST_KNOX = {
   'TOKEN_TTL': timedelta(hours=1200),
 }
-
+''' LOCATION_FIELD = {
+'provider.google.api': '//maps.google.com/maps/api/js?sensor=false',
+'provider.google.api_key': '<PLACE YOUR API KEY HERE>',
+'provider.google.api_libraries': '',
+'provider.google.map.type': 'ROADMAP',
+} '''
 
 TEMPLATES = [
     {

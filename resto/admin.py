@@ -13,12 +13,7 @@ class RestoAdmin(admin.ModelAdmin):
  model=Restaurant   
  list_display = ('name','position', 'latitude',
          'longitude', 'phone','user','active')
- def get_fields(self, request, obj=None):
-        if request.user.is_admin:
-            return ('name', 'latitude',
-         'longitude', 'phone','user','active')
-        return ('name', 'latitude',
-         'longitude', 'phone','user')
+
  def has_add_permission(self, request, obj=None):
         return request.user.is_admin 
  def has_delete_permission(self, request, obj=None):

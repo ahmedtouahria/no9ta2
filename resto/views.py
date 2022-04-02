@@ -6,21 +6,22 @@ from djstripe.enums import APIKeyType
 from djstripe.models import APIKey
 from django.conf import settings
 from rest_framework.response import Response
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions,viewsets,status
 from .models import Meal, Restaurant, MealSubscribe, SubscribeUser
 from .serializers import *
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes,action
 from datetime import date, timedelta
 from rest_framework.throttling import UserRateThrottle
 from user.models import Profile , User
 #from rest_framework import status
 from django.shortcuts import render, redirect 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 # get all meals list to any one 
 class MealsList(generics.ListAPIView):
    serializer_class = MealSerializer
-   #to insure resto is activated By adnin
+   #to insure resto is activated By admin
    resto=Restaurant.objects.filter(active=True)
    queryset = Meal.objects.filter(restaurant__in=resto)
 
@@ -99,7 +100,36 @@ def SubscribeMealList(request):
       return Response(serializers.data)
    else:
       return Response(f"error method{request.method} not allowed")
-   
+
+# get resto meals 
+class MealViewSetList(viewsets.ModelViewSet):
+    queryset = Restaurant.objects.filter(active=True)
+    serializer_class = RestoSerializer
+    #permission_classes = (permissions.IsAuthenticated,)
+    @action(detail=True)
+    def getMealsList(self, request, pk=None):
+        
+        resto=Restaurant.objects.get(id=pk)
+        meals_list=Meal.objects.filter(restaurant=resto)
+        serializer = MealSerializer(meals_list, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    def update(self, request, *args, **kwargs):
+        response = {
+            'message': 'Invalid way to create or update '
+            }
+
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    
+    def create(self, request, *args, **kwargs):
+        response = {
+            'message': 'Invalid way to create or update '
+            }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    def destroy(self, request, *args, **kwargs):
+        response = {
+            'message': 'Invalid way to delete '
+            }    
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
    ###############################-----# GETWAY PAYMENT WITH STRIPE #----#######################################
 ##############################------# Used webView #------##################################################
 # Get api_key from settings 

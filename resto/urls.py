@@ -1,15 +1,17 @@
 from django.urls import path, include
 from .views import *
-#from rest_framework import routers
+from rest_framework import routers
+router = routers.DefaultRouter()
+router.register('resto', MealViewSetList)
 
 urlpatterns = [
     # Resto endpoints
     path("meals/", MealsList.as_view(),),
     path("meals/<int:id>", MealRetrive.as_view(),),
-    path("resto/", RestoList.as_view(),),
-    path("resto/<int:id>", RestoRetrive.as_view(),),
     path('mealsubscribe/', SubscribeMealPost.as_view()),
     path("mealsubscribe/list/", SubscribeMealList),
+    path('', include(router.urls)),
+    
 
     #--------------PAYMENT GATWAY------------------#
     path("stripe/", include("djstripe.urls", namespace="djstripe")),

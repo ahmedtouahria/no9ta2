@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CreateUserSerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('name', 'phone', 'country', 'password')
+        fields = ('id','name', 'phone', 'country')
         password = serializers.CharField(
             style={'input_type': 'password'}, min_length=8, max_length=100, write_only=True)
 
@@ -81,5 +81,5 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['user', 'image','code','city','recommended_by','num_of_partner']
+        fields = ['id','user', 'image','code','country','recommended_by','num_of_partner']
         extra_kwargs={'recommended_by':{'read_only':True},'code':{'read_only':True}}

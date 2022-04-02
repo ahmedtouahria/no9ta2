@@ -100,11 +100,13 @@ class LoginAPI(KnoxLoginView):
     serializer_class = LoginUserSerializer
     
     def get_post_response_data(self, request, token, instance):
+        country=str(request.user.country)
         UserSerializer = self.get_user_serializer_class()
         data = {
             'id':request.user.id,
             'phone':request.user.phone,
            'username':request.user.name,
+           'country':country,
            'expiry': self.format_expiry_datetime(instance.expiry),
             'token': token
         }
