@@ -12,11 +12,11 @@ from .serializers import *
 from rest_framework.decorators import api_view, permission_classes, throttle_classes,action
 from datetime import date, timedelta
 from rest_framework.throttling import UserRateThrottle
-from user.models import Profile , User
+from user.models import User
 #from rest_framework import status
 from django.shortcuts import render, redirect 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
+#from django.db.models import Q
 
 # get all meals list to any one 
 class MealViewSet(viewsets.ModelViewSet):
