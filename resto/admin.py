@@ -1,6 +1,6 @@
 import json
 from django.contrib import admin
-from  .models import Restaurant,Meal,SubscribeUser,MealSubscribe
+from  .models import Rating, Restaurant,Meal,SubscribeUser,MealSubscribe
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count
 from django.db.models.functions import TruncDay
@@ -122,8 +122,10 @@ class MealSubAdmin(admin.ModelAdmin):
 
         # Call the superclass changelist_view to render the page
         return super().changelist_view(request, extra_context=extra_context)
- 
- 
+
+class RatingAdmin(admin.ModelAdmin):
+       list_display=('get_meal_name','get_user_name','stars')
+admin.site.register(Rating,RatingAdmin)
 admin.site.register(Restaurant,RestoAdmin)
 admin.site.register(Meal,MealAdmin)
 admin.site.register(SubscribeUser,SubscribeAdmin)

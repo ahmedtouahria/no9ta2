@@ -2,12 +2,10 @@ from django.urls import path, include
 from .views import *
 from rest_framework import routers
 router = routers.DefaultRouter()
-router.register('resto', MealViewSetList)
+router.register('resto', RestaurantViewSetList)
+router.register('meals', MealViewSet)
 
 urlpatterns = [
-    # Resto endpoints
-    path("meals/", MealsList.as_view(),),
-    path("meals/<int:id>", MealRetrive.as_view(),),
     path('mealsubscribe/', SubscribeMealPost.as_view()),
     path("mealsubscribe/list/", SubscribeMealList),
     path('', include(router.urls)),

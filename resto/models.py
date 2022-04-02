@@ -7,6 +7,8 @@ from .utils import generate_random_code
 from django.conf import settings
 from location_field.models.plain import PlainLocationField
 from geopy.geocoders import Nominatim
+from django.core.validators import MaxValueValidator, MinValueValidator
+
 geolocator = Nominatim(user_agent="geoapiExercises")
 
 phone_regex = RegexValidator(regex=r'^\+?1?\d{9,14}$', message="Phone number must be entered in the format: '+999999999'. Up to 14 digits allowed.")
@@ -73,6 +75,22 @@ class Meal(models.Model):
         return f"{self.name} - {self.price} QAR"
     def resto_name(self):
         return self.restaurant.name
+    def no_of_ratings(self):
+        ratings = Rating.objects.filter(meal=self)
+        return ratings.count()
+    
+    def avg_rating(self):
+        # sum of ratings stars  / len of rating hopw many ratings 
+        sum = 0
+        ratings = Rating.objects.filter(meal=self) # no of ratings happened to the meal 
+
+        for x in ratings:
+            sum += x.stars
+
+        if ratings.count() > 0:
+            return sum / ratings.count()
+        else:
+            return 0
   #  def count_meal_available(self):
    #     return len(Meal.objects.filter(isAvailaible=True))
 class SubscribeUser(models.Model):
@@ -104,3 +122,19 @@ class MealSubscribe(models.Model):
            code = generate_random_code()
            self.code=code
        super().save(*args, **kwargs)
+
+class Rating(models.Model):
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stars = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
+
+    def __str__(self):
+         return self.meal.name
+
+    def get_meal_name(self):
+        return self.meal.name
+    def get_user_name(self):
+            return self.user.name
+    class Meta:
+        unique_together = (('user', 'meal'),)
+        index_together = (('user', 'meal'),)       

@@ -19,28 +19,75 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 
 # get all meals list to any one 
-class MealsList(generics.ListAPIView):
-   serializer_class = MealSerializer
-   #to insure resto is activated By admin
-   resto=Restaurant.objects.filter(active=True)
-   queryset = Meal.objects.filter(restaurant__in=resto)
+class MealViewSet(viewsets.ModelViewSet):
+    queryset = Meal.objects.all()
+    serializer_class = MealSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    def update(self, request, *args, **kwargs):
+        response = {
+            'message': 'Invalid way to create or update '
+            }
 
-# get meal by id
-class MealRetrive(generics.RetrieveAPIView):
-   serializer_class = MealSerializer
-   #to insure resto is activated By adnin
-   resto=Restaurant.objects.filter(active=True)
-   queryset = Meal.objects.filter(restaurant__in=resto)
-   lookup_field = 'id'
-# get resto List to any one
-class RestoList(generics.ListAPIView):
-   serializer_class = RestoSerializer
-   queryset = Restaurant.objects.filter(active=True)
-# get resto by id
-class RestoRetrive(generics.RetrieveAPIView):
-   serializer_class = RestoSerializer
-   queryset = Restaurant.objects.filter(active=True)
-   lookup_field = 'id'
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    
+    def create(self, request, *args, **kwargs):
+        response = {
+            'message': 'Invalid way to create or update '
+            }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    def destroy(self, request, *args, **kwargs):
+        response = {
+            'message': 'Invalid way to delete '
+            }    
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+    @action(detail=True, methods=['post'])
+    def rate_meal(self, request, pk=None):
+        if 'stars' in request.data:
+            '''
+            create or update 
+            '''
+            meal = Meal.objects.get(id=pk)
+            stars = request.data['stars']
+            user = request.user
+            print(int(stars)==4)
+            # username = request.data['username']
+            # user = User.objects.get(username=username)                
+            try:
+                # update
+               if int(stars) > 0 and int(stars) <6:
+                rating = Rating.objects.get(user=user.id, meal=meal.id) # specific rate 
+                rating.stars = stars
+                rating.save()
+                serializer = RatingSerializer(rating, many=False)
+                json = {
+                    'message': 'Meal Rate Updated',
+                    'result': serializer.data
+                }
+                return Response(json , status=status.HTTP_200_OK)
+               else:
+                   return Response({"rate stars must be between [1,5]"} , status=status.HTTP_400_BAD_REQUEST)
+
+            except:
+                # create if the rate not exist 
+               if int(stars) > 0 and int(stars) <6:
+                    
+                rating = Rating.objects.create(stars=stars, meal=meal, user=user)
+                serializer = RatingSerializer(rating, many=False)
+                json = {
+                    'message': 'Meal Rate Created',
+                    'result': serializer.data
+                }
+                return Response(json , status=status.HTTP_200_OK)
+               else:
+                   return Response({"rate stars must be between [1,5]"} , status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            json = {
+                'message': 'stars not provided'
+            }
+            return Response(json , status=status.HTTP_400_BAD_REQUEST)
+
+
 # To ensure that the user cannot exceed 1 subscribe per day
 class OncePerDayUserThrottle(UserRateThrottle):
     rate = '1/day'
@@ -48,26 +95,6 @@ class OncePerDayUserThrottle(UserRateThrottle):
 class TowPerDayUserThrottle(UserRateThrottle):
     rate = '2/day'
 
-##########################################################################################
-# throttle_classes decorator to implement limitted request per day
-""" @throttle_classes([OncePerDayUserThrottle])
-class SubscribePost(generics.CreateAPIView):
-   permission_classes = (permissions.IsAuthenticated,)
-   serializer_class = SubscriberSerializer
-   queryset = SubscribeUser.objects.all()
-
-   # override this function for set current user to user
-   @throttle_classes([OncePerDayUserThrottle])
-   def perform_create(self, serializer):
-      # whene a user subscribes , the recommended user will take profit
-        profile = Profile.objects.get(user=self.request.user)
-        if profile.recommended_by != None:
-         profile_recommended = Profile.objects.get(user=profile.recommended_by)
-         profile_recommended.profit += 1.05
-         profile_recommended.save()
-         print(profile_recommended.profit)
-        serializer.save(user=self.request.user)
- """
 
 # throttle_classes decorator to implement limitted request per day
 
@@ -101,14 +128,13 @@ def SubscribeMealList(request):
    else:
       return Response(f"error method{request.method} not allowed")
 
-# get resto meals 
-class MealViewSetList(viewsets.ModelViewSet):
+# get resto and meal to specified resto 
+class RestaurantViewSetList(viewsets.ModelViewSet):
     queryset = Restaurant.objects.filter(active=True)
     serializer_class = RestoSerializer
-    #permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
     @action(detail=True)
     def getMealsList(self, request, pk=None):
-        
         resto=Restaurant.objects.get(id=pk)
         meals_list=Meal.objects.filter(restaurant=resto)
         serializer = MealSerializer(meals_list, many=True)
