@@ -9,7 +9,9 @@ urlpatterns = [
     path('mealsubscribe/', SubscribeMealPost.as_view()),
     path("mealsubscribe/list/", SubscribeMealList),
     path('', include(router.urls)),
-    
+    path('test_payment/',test_payment),
+    path('save_stripe_info/',save_stripe_info),
+
 
     #--------------PAYMENT GATWAY------------------#
     path("stripe/", include("djstripe.urls", namespace="djstripe")),
